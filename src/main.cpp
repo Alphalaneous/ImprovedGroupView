@@ -18,18 +18,6 @@ std::string getNameForID(NID nid, short id) {
     return result;
 }
 
-short getIDForNameFor(NID nid, std::string name) {
-    short result;
-    NIDManager::event::EventGetIDForName("spaghettdev.named-editor-groups/v2/get-id-for-name", &result, nid, name).post();
-    return result;
-}
-
-std::unordered_map<std::string, short> getNamedIDs(NID nid) {
-    std::unordered_map<std::string, short> result;
-    NIDManager::event::EventGetNamedIDs("spaghettdev.named-editor-groups/v2/get-named-ids", &result, nid).post();
-    return result;
-}
-
 class LimitedCCMenu : public CCMenu {
 
     public:
@@ -206,15 +194,6 @@ class $modify(MySetGroupIDLayer, SetGroupIDLayer) {
         (void) self.setHookPriorityBeforePost("SetGroupIDLayer::init", "spaghettdev.named-editor-groups");
     }
 
-    void checkNamedIDs(float dt) {
-        auto fields = m_fields.self();
-        std::unordered_map<std::string, short> namedIDs = getNamedIDs(NID::GROUP);
-        if (namedIDs != fields->m_namedIDs) {
-            fields->m_namedIDs = namedIDs;
-            regenerateGroupView();
-        }
-    }
-
     bool init(GameObject* obj, cocos2d::CCArray* objs) {
         if (!SetGroupIDLayer::init(obj, objs)) {
             return false;
@@ -255,17 +234,13 @@ class $modify(MySetGroupIDLayer, SetGroupIDLayer) {
             }
         }
 
-        if (Loader::get()->isModLoaded("spaghettdev.named-editor-groups")) {
-            schedule(schedule_selector(MySetGroupIDLayer::checkNamedIDs));
-        }
         regenerateGroupView();
 
         m_fields->m_apiListener.bind([this](igv::GroupViewUpdateEvent* event) {
             regenerateGroupView();
 
             return ListenerResult::Propagate;
-        }
-        );
+        });
 
         return true;
     }
@@ -407,14 +382,14 @@ class $modify(MySetGroupIDLayer, SetGroupIDLayer) {
         float padding = 7.5;
 
         groupsMenu->setContentSize(contentSize);
-        groupsMenu->setPosition({360/2, padding});
+        groupsMenu->setPosition({360.f / 2.f, padding});
         groupsMenu->setAnchorPoint({0.5, 0});
         groupsMenu->updateLayout();
 
         fields->m_currentMenu = groupsMenu;
         menuContainer->setContentSize({360, groupsMenu->getScaledContentSize().height + padding * 2});
         menuContainer->setAnchorPoint({0.5, 0});
-        menuContainer->setPosition({360/2, 0});
+        menuContainer->setPosition({360.f / 2.f, 0});
         menuContainer->addChild(groupsMenu);
 
         CCSize winSize = CCDirector::get()->getWinSize();

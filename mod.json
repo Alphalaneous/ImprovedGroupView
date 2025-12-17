@@ -16,18 +16,13 @@
         "source": "https://github.com/Alphalaneous/ImprovedGroupView",
         "community": "https://discord.gg/Txn2CA5dHF"
     },
-	"dependencies": [
-        {
-            "id": "geode.node-ids",
-            "version": ">=v1.14.0",
-            "importance": "required"
-        },
-		{
-			"id": "spaghettdev.named-editor-groups",
+	"dependencies": {
+        "geode.node-ids": ">=1.14.0",
+		"spaghettdev.named-editor-groups": {
             "version": ">=v2.0.0",
             "importance": "suggested"
 		}
-    ],
+	},
 	"api": {
 		"include": [
 			"api/*.hpp"
